@@ -1070,14 +1070,6 @@ class TorrentController extends Controller
                     }
                 }
 
-                //Remove Torrent related info
-                Peer::where('torrent_id', '=', $id)->delete();
-                History::where('info_hash', '=', $torrent->info_hash)->delete();
-                Warning::where('id', '=', $id)->delete();
-                TorrentFile::where('torrent_id', '=', $id)->delete();
-                if ($torrent->featured == 1) {
-                    FeaturedTorrent::where('torrent_id', '=', $id)->delete();
-                }
                 Torrent::withAnyStatus()->where('id', '=', $id)->delete();
 
                 return redirect('/torrents')
