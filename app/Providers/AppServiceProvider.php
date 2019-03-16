@@ -14,6 +14,8 @@
 namespace App\Providers;
 
 use App\Models\Page;
+use App\Models\Article;
+use App\Models\Torrent;
 use Illuminate\View\View;
 use App\Interfaces\WishInterface;
 use App\Repositories\WishRepository;
@@ -62,5 +64,8 @@ class AppServiceProvider extends ServiceProvider
 
         // registering a interface to a concrete class, so we can inject the interface
         $this->app->bind(WishInterface::class, WishRepository::class);
+
+        // Observers
+        Article::observe(ArticleObserver::class);
     }
 }
