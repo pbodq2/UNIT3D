@@ -18,6 +18,8 @@ use App\Models\Article;
 use App\Models\Torrent;
 use Illuminate\View\View;
 use App\Interfaces\WishInterface;
+use App\Observers\ArticleObserver;
+use App\Observers\TorrentObserver;
 use App\Repositories\WishRepository;
 use App\Services\Clients\OmdbClient;
 use Illuminate\Support\ServiceProvider;
@@ -42,6 +44,10 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with(compact('pages'));
         });
+
+        // Observers
+        Article::observe(ArticleObserver::class);
+        Torrent::observe(TorrentObserver::class);
     }
 
     /**
@@ -64,8 +70,5 @@ class AppServiceProvider extends ServiceProvider
 
         // registering a interface to a concrete class, so we can inject the interface
         $this->app->bind(WishInterface::class, WishRepository::class);
-
-        // Observers
-        Article::observe(ArticleObserver::class);
     }
 }
