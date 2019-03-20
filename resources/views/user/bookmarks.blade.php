@@ -22,7 +22,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="block">
-            @include('user.buttons.bookmark')
+            @include('user.buttons.other')
             <div class="header gradient red">
                 <div class="inner_content">
                     <h1>{{ $user->username }} @lang('user.bookmarks')</h1>
@@ -38,9 +38,9 @@
                         <th>@lang('common.name')</th>
                         <th><i class="{{ config('other.font-awesome') }} fa-clock"></i></th>
                         <th><i class="{{ config('other.font-awesome') }} fa-file"></i></th>
-                        <th><i class="{{ config('other.font-awesome') }} fa-check-square"></i></th>
                         <th><i class="{{ config('other.font-awesome') }} fa-arrow-circle-up"></i></th>
                         <th><i class="{{ config('other.font-awesome') }} fa-arrow-circle-down"></i></th>
+                        <th><i class="{{ config('other.font-awesome') }} fa-check-square"></i></th>
                         <th><i class="{{ config('other.font-awesome') }} fa-cogs"></i></th>
                     </tr>
                     </thead>
@@ -81,7 +81,7 @@
                                     </a>
                                 @endif
                                 
-                                @php $history = \App\History::where('user_id', '=', $user->id)->where('info_hash', '=', $bookmark->info_hash)->first(); @endphp
+                                @php $history = \App\Models\History::where('user_id', '=', $user->id)->where('info_hash', '=', $bookmark->info_hash)->first(); @endphp
                                 @if ($history)
                                     @if ($history->seeder == 1 && $history->active == 1)
                                         <button class="btn btn-success btn-circle" type="button" data-toggle="tooltip"
@@ -173,7 +173,7 @@
                                     </span>
                                 @endif
 
-                                @php $freeleech_token = \App\FreeleechToken::where('user_id', '=', $user->id)->where('torrent_id', '=', $bookmark->id)->first(); @endphp
+                                @php $freeleech_token = \App\Models\FreeleechToken::where('user_id', '=', $user->id)->where('torrent_id', '=', $bookmark->id)->first(); @endphp
                                 @if ($freeleech_token)
                                     <span class='badge-extra text-bold'>
                                         <i class='{{ config("other.font-awesome") }} fa-coins text-bold' data-toggle='tooltip' data-original-title='Freeleech Token'></i> Freeleech Token
@@ -246,13 +246,6 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('history', ['slug' => $bookmark->slug, 'id' => $bookmark->id]) }}">
-                                    <span class='badge-extra text-orange text-bold'>
-                                        {{ $bookmark->times_completed }} @lang('common.times')
-                                    </span>
-                                </a>
-                            </td>
-                            <td>
                                 <a href="{{ route('peers', ['slug' => $bookmark->slug, 'id' => $bookmark->id]) }}">
                                     <span class='badge-extra text-green text-bold'>
                                         {{ $bookmark->seeders }}
@@ -263,6 +256,13 @@
                                 <a href="{{ route('peers', ['slug' => $bookmark->slug, 'id' => $bookmark->id]) }}">
                                     <span class='badge-extra text-red text-bold'>
                                         {{ $bookmark->leechers }}
+                                    </span>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ route('history', ['slug' => $bookmark->slug, 'id' => $bookmark->id]) }}">
+                                    <span class='badge-extra text-orange text-bold'>
+                                        {{ $bookmark->times_completed }} @lang('common.times')
                                     </span>
                                 </a>
                             </td>

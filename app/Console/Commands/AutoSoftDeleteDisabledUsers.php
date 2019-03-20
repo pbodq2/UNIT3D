@@ -13,9 +13,9 @@
 
 namespace App\Console\Commands;
 
-use App\User;
-use App\Group;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Group;
 use Illuminate\Console\Command;
 use App\Jobs\SendDeleteUserMail;
 
@@ -43,8 +43,8 @@ class AutoSoftDeleteDisabledUsers extends Command
     public function handle()
     {
         if (config('pruning.user_pruning') == true) {
-            $disabledGroup = Group::where('slug', '=', 'disabled')->select('id')->first();
-            $prunedGroup = Group::where('slug', '=', 'pruned')->select('id')->first();
+            $disabledGroup = Group::select(['id'])->where('slug', '=', 'disabled')->first();
+            $prunedGroup = Group::select(['id'])->where('slug', '=', 'pruned')->first();
 
             $current = Carbon::now();
             $users = User::where('group_id', '=', $disabledGroup->id)

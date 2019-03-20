@@ -1,9 +1,5 @@
 <?php
-/*
- * |--------------------------------------------------------------------------
- * | User Language Lines
- * |--------------------------------------------------------------------------
- */
+
 return [
     'about'                     => 'About',
     'about-me'                  => 'About Me (500 Characters Max!)',
@@ -71,8 +67,8 @@ return [
     'delete'                    => 'Delete User',
     'disable-notifications'     => 'Disable Notifications',
     'disclaimer'                => 'Disclaimer',
-    'disclaimer-info'           => 'We by default do not log users IP addresses like most trackers. By adding your seedbox IP below it is expected that you know your IP\'s listed below are now stored in our database unless you delete the records.',
-    'disclaimer-info-bordered'  => 'Seedbox IP\'s added will then trigger high speed torrent tag on torrents seeded from IP\'s listed below',
+    'disclaimer-info'           => 'We by default do not log users IP addresses like most trackers. By adding your seedbox IP below it is expected that you know your IPs listed below are now stored in our database unless you delete the records.',
+    'disclaimer-info-bordered'  => 'Seedbox IPs added will then trigger high speed torrent tag on torrents seeded from IPs listed below',
     'download-bon'              => 'Download Removed From BON Store',
     'download-recorded'         => 'Recorded Download',
     'download-true'             => 'True Download',
@@ -84,6 +80,7 @@ return [
     'expires-on'                => 'Expires On',
     'expires-on'                => 'Expires on',
     'extra'                     => 'Extra',
+    'filled-request'            => 'Filled Members Requests',
     'follow'                    => 'Follow',
     'follower-privacy'             => 'Follower Settings',
     'follower-privacy-list'        => 'Allow users to view a list of your followers',
@@ -99,7 +96,7 @@ return [
     'forum-notification-topic' => 'Receive a notification when a topic that you started gets a new post',
     'forum-notification-help'      => 'Control which notifications are sent concerning forum activities.
     These settings are overridden if you do not allow any groups to send notifications concerning forum activities or if you <strong>Disable Notifications</strong>',
-    'forum-privacy'             => 'Forum History Settings',
+    'forum-privacy'             => 'Forum Settings',
     'forum-privacy-post'        => 'Allow users to view a list of forum posts that you have posted',
     'forum-privacy-topic'       => 'Allow users to view a list of forum topics that you have started',
     'forum-help'                => 'Control the sharing of specific forum related statistics and information with groups that are allowed to access to your profile.
@@ -129,7 +126,7 @@ return [
     'invites-count'             => 'You Have :count Invite Tokens',
     'invites-disabled'          => 'Attention: Invites Are Disabled Due To Open Registration!',
     'invites-disabled-desc'     => 'Please Check Back Soon!',
-    'invites-rules'             => '<li class="text-success">Only invite people you know and trust.</li><li class="text-danger">You will be held personally responsible for those you invite.</li><li class="text-danger">Don\'t invite yourself, we check every invited user.</li><li class="text-danger">Don\'t trade or sell Invites.</li><li class="text-danger">If a person you invited is caught cheating, trading account or selling/trading invites, you will be warned.</li>',
+    'invites-rules'             => '<li class="text-success">Only invite people you know and trust.</li><li class="text-danger">You will be held personally responsible for those you invite.</li><li class="text-danger">Dont invite yourself, we check every invited user.</li><li class="text-danger">Dont trade or sell Invites.</li><li class="text-danger">If a person you invited is caught cheating, trading account or selling/trading invites, you will be warned.</li>',
     'invites-send'              => 'Invites Send',
     'last-login'                => 'Last Login',
     'locked'                    => 'Locked',
@@ -153,6 +150,7 @@ return [
     'my-privacy'                => 'My Privacy',
     'my-privacy-settings'       => 'My Privacy Settings',
     'my-profile'                => 'My Profile',
+    'my-requested'              => 'My Requested',
     'my-security'               => 'My Security',
     'my-security-settings'      => 'My Security Settings',
     'my-seedboxes'              => 'My Seedboxes',
@@ -192,6 +190,10 @@ return [
     'offline'                   => 'User Is Offline!',
     'online'                    => 'User Is Online!',
     'options'                   => 'Options',
+    'other-help'                => 'Control the sharing of other statistics and information with groups that are allowed to access to your profile.
+    These settings are overridden if you do not allow any groups to access your other statistics and information or if you <strong>Go Private</strong>',
+    'other-privacy'             => 'Other Settings',
+    'other-privacy-online'      => 'Allow users to see you in the online users block',
     'passkey'                   => 'PID',
     'passkey-warning'           => 'PID is like your password, you must keep it safe!',
     'pending-achievements'      => 'Pending achievements',
@@ -214,6 +216,7 @@ return [
     'profile-privacy-bon-extra'       => 'Share your BON statistics',
     'profile-privacy-comment-extra'       => 'Share your comment statistics',
     'profile-privacy-forum-extra'       => 'Share your forum statistics',
+    'profile-privacy-request-extra'       => 'Share your request statistics',
     'profile-privacy-torrent-extra'       => 'Share your torrent statistics',
     'profile-privacy-badge'       => 'Share your earned badges',
     'profile-privacy-achievement' => 'Share your recent achievements',
@@ -225,7 +228,12 @@ return [
     'recent-achievements'       => 'Recent Achievements',
     'recent-followers'          => 'Recent Followers',
     'registration-date'         => 'Registration date',
-    'report'                    => 'Report User',
+    'report'                    => 'Report',
+    'request-help'              => 'Control the sharing of specific request related statistics and information with groups that are allowed to access to your profile.
+    These settings are overridden if you do not allow any groups to access your requested related statistics and information or if you <strong>Go Private</strong>',
+    'request'                   => 'Request',
+    'requested'                 => 'Requested',
+    'requests'                  => 'Requests',
     'request-comments'          => 'Request Comments Made',
     'request-notification'      => 'Request Notification Settings',
     'request-notification-bounty' => 'Receive a notification when a requested torrent gets a new bounty',
@@ -237,6 +245,8 @@ return [
     'request-notification-unclaim' => 'Receive a notification when a requested torrent gets unclaimed',
     'request-notification-help'      => 'Control which notifications are sent concerning request activities.
     These settings are overridden if you do not allow any groups to send notifications concerning request activities or if you <strong>Disable Notifications</strong>',
+    'request-privacy'           => 'Request Settings',
+    'request-privacy-requested' => 'Allow users to view a list of requests that you have made',
     'reset-passkey'             => 'Reset Pass Key (PID)',
     'reset-passkey-help'        => 'You will have to re-download/re-upload all of your active torrents, after resetting the PID',
     'reset-rss'                 => 'Reset RSS Key (RID)',
@@ -266,10 +276,13 @@ return [
     'top-bankers'               => 'Top Bankers',
     'top-downloaders-data'      => 'Top Downloaders (Data)',
     'top-leechers'              => 'Top Leechers',
+    'top-leechers-count'        => 'Top Leechers (Count)',
     'top-seeders'               => 'Top Seeders',
+    'top-seeders-count'         => 'Top Seeders (Count)',
+    'top-seeding-size'          => 'Top Seeding (Size)',
     'top-seedtime'              => 'Top Seedtime',
-    'top-uploaders-data'        => 'Top Uploaders (data)',
-    'top-uploaders-torrents'    => 'Top Uploaders (torrents)',
+    'top-uploaders-data'        => 'Top Uploaders (Data)',
+    'top-uploaders-count'       => 'Top Uploaders (Count)',
     'topics'                    => 'Topics',
     'topics-started'               => 'Forum Topics Started',
     'torrent-comments'          => 'Torrent Comments Made',
@@ -281,9 +294,10 @@ return [
     'torrent-notification-tip' => 'Receive a notification when an uploaded torrent gets a new tip',
     'torrent-notification-help'      => 'Control which notifications are sent concerning torrent activities.
     These settings are overridden if you do not allow any groups to send notifications concerning torrent activities or if you <strong>Disable Notifications</strong>',
-    'torrent-privacy'           => 'Torrent History Settings',
+    'torrent-privacy'           => 'Torrent Settings',
     'torrent-privacy-download'  => 'Allow users to view a list of torrents that you have downloaded',
     'torrent-privacy-upload'    => 'Allow users to view a list of torrents that you have uploaded',
+    'torrent-privacy-peer'      => 'Allow users to see you in the torrent peer history table',
     'torrents'                  => 'Torrents',
     'torrents-history'          => 'Torrents History',
     'total-download'            => 'Total Download',
@@ -312,15 +326,21 @@ return [
     'visible-to-follower'        => 'Followers Visible To',
     'visible-to-follower-help'           => 'Your followers will only be visible to staff and the following groups.
     These settings are overridden if you <strong>Go Private</strong>',
-    'visible-to-forum'        => 'Forum History Visible To',
-    'visible-to-forum-help'           => 'Your forum history will only be visible to staff and the following groups.
+    'visible-to-forum'        => 'Forum Information Visible To',
+    'visible-to-forum-help'           => 'Your forum information will only be visible to staff and the following groups.
     These settings are overridden if you <strong>Go Private</strong>',
+    'visible-to-other'        => 'Other Visible To',
+    'visible-to-other-help'           => 'Other information concerning your account will only be visible to staff and the following groups.
+    These settings are overridden if you <strong>Go Private</strong> or if you <strong>Go Hidden</strong>',
     'visible-to-profile'        => 'Profile Visible To',
     'visible-to-profile-help'           => 'Your profile will only be visible to staff and the following groups.
     These settings are overridden if you <strong>Go Private</strong>',
-    'visible-to-torrent'        => 'Torrent History Visible To',
-    'visible-to-torrent-help'           => 'Your torrent history will only be visible to staff and the following groups.
+    'visible-to-request'        => 'Request Information Visible To',
+    'visible-to-request-help'           => 'Your request information will only be visible to staff and the following groups.
     These settings are overridden if you <strong>Go Private</strong>',
+    'visible-to-torrent'        => 'Torrent Information Visible To',
+    'visible-to-torrent-help'           => 'Your torrent information will only be visible to staff and the following groups.
+    These settings are overridden if you <strong>Go Private</strong> or if you <strong>Go Hidden</strong>',
     'warned-on'                 => 'Warned On',
     'warning'                   => 'Warning',
     'warning-log'               => 'Warning Log',

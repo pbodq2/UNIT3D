@@ -44,9 +44,9 @@
                     <th>@lang('common.name')</th>
                     <th><i class="{{ config('other.font-awesome') }} fa-clock"></i></th>
                     <th><i class="{{ config('other.font-awesome') }} fa-file"></i></th>
-                    <th><i class="{{ config('other.font-awesome') }} fa-check-square"></i></th>
                     <th><i class="{{ config('other.font-awesome') }} fa-arrow-circle-up"></i></th>
                     <th><i class="{{ config('other.font-awesome') }} fa-arrow-circle-down"></i></th>
+                    <th><i class="{{ config('other.font-awesome') }} fa-check-square"></i></th>
                 </tr>
                 </thead>
 
@@ -120,7 +120,7 @@
 
                                 {{--<smallbookmark :id="{{ $torrent->id }}" :state="{{ $torrent->bookmarked()  ? 1 : 0}}"></smallbookmark>--}}
 
-                                @php $history = \App\History::where('user_id', '=', $user->id)->where('info_hash', '=', $torrent->info_hash)->first(); @endphp
+                                @php $history = \App\Models\History::where('user_id', '=', $user->id)->where('info_hash', '=', $torrent->info_hash)->first(); @endphp
                                 @if ($history)
                                     @if ($history->seeder == 1 && $history->active == 1)
                                         <button class="btn btn-success btn-circle" type="button" data-toggle="tooltip"
@@ -172,7 +172,7 @@
 
                                 @if ($torrent->category->meta == 1)
                                     @if ($user->ratings == 1)
-                                        <a href="http://www.imdb.com/title/tt{{ $torrent->imdb }}">
+                                        <a href="https://www.imdb.com/title/tt{{ $torrent->imdb }}">
                                 <span class="badge-extra text-bold">
                                     <span class="text-gold movie-rating-stars">
                                         <i class="{{ config('other.font-awesome') }} fa-star" data-toggle="tooltip"
@@ -243,7 +243,7 @@
                             </span>
                                                 @endif
 
-                                                @php $freeleech_token = \App\FreeleechToken::where('user_id', '=', $user->id)->where('torrent_id', '=', $torrent->id)->first(); @endphp
+                                                @php $freeleech_token = \App\Models\FreeleechToken::where('user_id', '=', $user->id)->where('torrent_id', '=', $torrent->id)->first(); @endphp
                                                 @if ($freeleech_token)
                                                     <span class='badge-extra text-bold'>
                                 <i class='{{ config("other.font-awesome") }} fa-coins text-bold' data-toggle='tooltip' title=''
@@ -322,13 +322,6 @@
                                 <span class='badge-extra text-blue text-bold'>{{ $torrent->getSize() }}</span>
                             </td>
                             <td>
-                                <a href="{{ route('history', ['slug' => $torrent->slug, 'id' => $torrent->id]) }}">
-                            <span class='badge-extra text-orange text-bold'>
-                                {{ $torrent->times_completed }} @lang('common.times')
-                            </span>
-                                </a>
-                            </td>
-                            <td>
                                 <a href="{{ route('peers', ['slug' => $torrent->slug, 'id' => $torrent->id]) }}">
                             <span class='badge-extra text-green text-bold'>
                                 {{ $torrent->seeders }}
@@ -339,6 +332,13 @@
                                 <a href="{{ route('peers', ['slug' => $torrent->slug, 'id' => $torrent->id]) }}">
                             <span class='badge-extra text-red text-bold'>
                                 {{ $torrent->leechers }}
+                            </span>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ route('history', ['slug' => $torrent->slug, 'id' => $torrent->id]) }}">
+                            <span class='badge-extra text-orange text-bold'>
+                                {{ $torrent->times_completed }} @lang('common.times')
                             </span>
                                 </a>
                             </td>

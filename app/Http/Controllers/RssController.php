@@ -13,13 +13,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Rss;
-use App\Type;
-use App\User;
-use App\Group;
-use App\Torrent;
-use App\Category;
-use App\TagTorrent;
+use App\Models\Rss;
+use App\Models\Type;
+use App\Models\User;
+use App\Models\Group;
+use App\Models\Torrent;
+use App\Models\Category;
+use App\Models\TagTorrent;
 use Brian2694\Toastr\Toastr;
 use Illuminate\Http\Request;
 use App\Repositories\TorrentFacetedRepository;
@@ -150,8 +150,8 @@ class RssController extends Controller
         $user = User::where('rsskey', '=', (string) $rsskey)->firstOrFail();
         $rss = Rss::where('id', '=', (int) $id)->whereRaw('(user_id = ? OR is_private != ?)', [$user->id, 1])->firstOrFail();
 
-        $bannedGroup = Group::where('slug', '=', 'banned')->select('id')->first();
-        $disabledGroup = Group::where('slug', '=', 'disabled')->select('id')->first();
+        $bannedGroup = Group::select(['id'])->where('slug', '=', 'banned')->first();
+        $disabledGroup = Group::select(['id'])->where('slug', '=', 'disabled')->first();
 
         if ($user->group->id == $bannedGroup->id) {
             abort(404);
@@ -162,8 +162,6 @@ class RssController extends Controller
         if ($user->active == 0) {
             abort(404);
         }
-
-        $torrent = Torrent::with(['user', 'category']);
 
         $search = $rss->object_torrent->search;
         $description = $rss->object_torrent->description;
@@ -204,7 +202,7 @@ class RssController extends Controller
             $description .= '%'.$keyword.'%';
         }
 
-        $torrent = $torrent->with(['user', 'category'])->withCount(['thanks', 'comments']);
+        $torrent = Torrent::with(['user', 'category']);
 
         if ($rss->object_torrent->search) {
             $torrent->where(function ($query) use ($search) {
@@ -251,7 +249,7 @@ class RssController extends Controller
         }
 
         if ($rss->object_torrent->genres && is_array($rss->object_torrent->genres)) {
-            $genreID = TagTorrent::distinct()->select('torrent_id')->whereIn('tag_name', $genres)->get();
+            $genreID = TagTorrent::select(['torrent_id'])->distinct()->whereIn('tag_name', $genres)->get();
             $torrent->whereIn('id', $genreID)->cursor();
         }
 
@@ -295,7 +293,7 @@ class RssController extends Controller
             $torrent->where('seeders', '=', $dead);
         }
 
-        $torrents = $torrent->latest()->paginate(50);
+        $torrents = $torrent->latest()->take(50)->get();
 
         return view('rss.show', [
             'torrents'        => $torrents,

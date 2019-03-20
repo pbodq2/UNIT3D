@@ -14,7 +14,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Group;
+use App\Models\Group;
 use Brian2694\Toastr\Toastr;
 
 class CheckIfBanned
@@ -46,7 +46,7 @@ class CheckIfBanned
     public function handle($request, Closure $next, $guard = null)
     {
         $user = auth()->user();
-        $bannedGroup = Group::where('slug', '=', 'banned')->select('id')->first();
+        $bannedGroup = Group::select(['id'])->where('slug', '=', 'banned')->first();
 
         if ($user && $user->group_id == $bannedGroup->id) {
             auth()->logout();

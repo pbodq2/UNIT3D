@@ -14,7 +14,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CheckForAdmin
 {
@@ -28,9 +27,7 @@ class CheckForAdmin
      */
     public function handle($request, Closure $next)
     {
-        if (! auth()->check() || ! auth()->user()->group->is_admin) {
-            throw new NotFoundHttpException();
-        }
+        abort_unless(auth()->user()->group->is_admin, 403);
 
         return $next($request);
     }

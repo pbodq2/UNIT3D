@@ -1,9 +1,5 @@
 <?php
-/*
- * |--------------------------------------------------------------------------
- * | Torrent Language Lines
- * |--------------------------------------------------------------------------
- */
+
 return [
     'activity'                 => 'Activity',
     'age'                      => 'Age',
@@ -44,7 +40,7 @@ return [
     'delete-bookmark'          => 'Delete This Bookmark',
     'description'              => 'Description',
     'discounts'                => 'Discounts',
-    'double-upload'            => 'Double upload',
+    'double-upload'            => 'Double Upload',
     'download-all'             => 'Download All',
     'download-check'           => 'Download check',
     'downloaded'               => 'Downloaded',
@@ -61,10 +57,11 @@ return [
     'filters'                  => 'Search Filters',
     'fl-tokens-left'           => 'You have <strong><i class="fal fa-coins"></i>:tokens</strong> left',
     'freeleech'                => 'Freeleech',
-    'freeleech-token'          => 'Freeleech token',
+    'freeleech-token'          => 'Freeleech Token',
     'general'                  => 'General',
     'genre'                    => 'Genre',
-    'global-freelech'          => 'Global freeleech',
+    'global-double-upload'     => 'Global Double Upload',
+    'global-freeleech'         => 'Global Freeleech',
     'grant'                    => 'Grant',
     'greater-than'             => 'Greater than',
     'grouping'                 => 'Grouping',
@@ -120,7 +117,7 @@ return [
     'passed'                   => 'Passed',
     'peers'                    => 'Peers',
     'pending'                  => 'Pending',
-    'personal-freeleech'       => 'Personal freeleech',
+    'personal-freeleech'       => 'Personal Freeleech',
     'poster'                   => 'Poster',
     'poster-view'              => 'Poster view',
     'posters'                  => 'Posters',
@@ -157,7 +154,7 @@ return [
     'similar'                  => 'Similar Torrents',
     'size'                     => 'Size',
     'special'                  => 'Special',
-    'special-freeleech'        => 'Special freelech',
+    'special-freeleech'        => 'Special Freeleech',
     'started'                  => 'Started',
     'status'                   => 'Status',
     'statistics'               => 'Statistics',
@@ -193,6 +190,7 @@ return [
     'updated'                  => 'Updated',
     'updated_at'               => 'Updated at',
     'uploaded'                 => 'Uploaded',
+    'uploaded-by'              => 'Uploaded By',
     'uploader'                 => 'Uploader',
     'use-fl-token'             => 'Use A Freeleech Token',
     'video'                    => 'Video',

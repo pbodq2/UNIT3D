@@ -13,13 +13,13 @@
 
 namespace App\Http\Controllers\Staff;
 
-use App\Peer;
-use App\User;
-use App\Group;
-use App\Client;
-use App\Report;
-use App\Torrent;
-use App\Application;
+use App\Models\Peer;
+use App\Models\User;
+use App\Models\Group;
+use App\Models\Client;
+use App\Models\Report;
+use App\Models\Torrent;
+use App\Models\Application;
 use App\Helpers\SystemInformation;
 use App\Http\Controllers\Controller;
 use Spatie\SslCertificate\SslCertificate;
@@ -34,8 +34,8 @@ class HomeController extends Controller
     public function home()
     {
         // User Info
-        $bannedGroup = Group::where('slug', '=', 'banned')->select('id')->first();
-        $validatingGroup = Group::where('slug', '=', 'validating')->select('id')->first();
+        $bannedGroup = Group::select(['id'])->where('slug', '=', 'banned')->first();
+        $validatingGroup = Group::select(['id'])->where('slug', '=', 'validating')->first();
 
         $num_user = User::count();
         $banned = User::where('group_id', '=', $bannedGroup->id)->count();

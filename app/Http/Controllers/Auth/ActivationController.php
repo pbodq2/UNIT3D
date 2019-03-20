@@ -13,9 +13,9 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Group;
-use App\UserActivation;
+use App\Models\Group;
 use Brian2694\Toastr\Toastr;
+use App\Models\UserActivation;
 use App\Http\Controllers\Controller;
 
 class ActivationController extends Controller
@@ -37,8 +37,8 @@ class ActivationController extends Controller
 
     public function activate($token)
     {
-        $bannedGroup = Group::where('slug', '=', 'banned')->select('id')->first();
-        $memberGroup = Group::where('slug', '=', 'user')->select('id')->first();
+        $bannedGroup = Group::select(['id'])->where('slug', '=', 'banned')->first();
+        $memberGroup = Group::select(['id'])->where('slug', '=', 'user')->first();
 
         $activation = UserActivation::with('user')->where('token', '=', $token)->firstOrFail();
         if ($activation->user->id && $activation->user->group->id != $bannedGroup->id) {

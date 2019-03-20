@@ -1,9 +1,5 @@
 <?php
-/*
- * |--------------------------------------------------------------------------
- * | RSS Language Lines
- * |--------------------------------------------------------------------------
- */
+
 return [
     'create'        => 'Create',
     'create-private-feed'   => 'Create Private RSS Feed',
@@ -18,5 +14,6 @@ return [
     'public'        => 'Public',
     'private'       => 'Private',
     'rss'           => 'RSS',
+    'rss-feed'      => 'RSS Feed',
     'type'          => 'Type',
 ];

@@ -1,9 +1,5 @@
 <?php
-/*
- * |--------------------------------------------------------------------------
- * | Common Language Lines
- * |--------------------------------------------------------------------------
- */
+
 return [
     'about'                => 'About Us',
     'account'              => 'Account',
@@ -38,6 +34,7 @@ return [
     'delete-your-comment'  => 'Delete your comment',
     'description'          => 'Description',
     'direction'            => 'Direction',
+    'disable'              => 'Disable',
     'doubleup_activated'   => 'Global Double upload mode activated',
     'download'             => 'Download',
     'edit'                 => 'Edit',
@@ -46,6 +43,7 @@ return [
     'email-blacklist'      => 'Email Blacklist',
     'email-whitelist'      => 'Email Whitelist',
     'email-list-notactive' => 'Email Whitelist / Blacklist System Is Not Activated',
+    'enable'               => 'Enable',
     'enter'                => 'Enter',
     'error'                => 'Error',
     'everyday'             => 'Everyday',
@@ -155,6 +153,11 @@ return [
     'topics'               => 'Topics',
     'tracker-codes'        => 'Tracker codes',
     'type'                 => 'Type',
+    'types'                => 'Types',
+    'genre'                => 'Genre',
+    'genres'               => 'Genres',
+    'action'               => 'Action',
+    'actions'              => 'Actions',
     'unknown'              => 'Unknown',
     'unlocked-achievement' => 'You unlocked :achievement achievement',
     'upload'               => 'Upload',

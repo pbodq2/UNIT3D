@@ -83,7 +83,7 @@
                                 <li>
                                     @if ($torrent->imdb != 0 && $torrent->imdb != null)
                   <span class="badge-user text-bold text-orange">
-                    <a href="http://www.imdb.com/title/tt{{ $torrent->imdb }}" title="IMDB"
+                    <a href="https://www.imdb.com/title/tt{{ $torrent->imdb }}" title="IMDB"
                        target="_blank">IMDB: {{ $torrent->imdb }}</a>
                   </span>
                                     @endif
@@ -112,8 +112,7 @@
                     </span>
                                     @endif
                                     @if ($movie->videoTrailer != '')
-                                        <span onclick="showTrailer()" style="cursor: pointer;"
-                                              class="badge-user text-bold">
+                                        <span style="cursor: pointer;" class="badge-user text-bold show-trailer">
                             <a class="text-pink" title="@lang('torrent.trailer')">@lang('torrent.trailer') <i
                                         class="{{ config('other.font-awesome') }} fa-external-link"></i></a>
                         </span>
@@ -169,8 +168,8 @@
                             </span>
                         </a>
                     @endif
-                    @if ($torrent->imdb != 0)
-                        <a href="{{ route('torrents.similar', ['imdb' => $torrent->imdb]) }}"
+                    @if ($torrent->tmdb != 0)
+                        <a href="{{ route('torrents.similar', ['category_id' => $torrent->category_id, 'tmdb' => $torrent->tmdb]) }}"
                            role="button"
                            class="btn btn-labeled btn-primary">
           <span class='btn-label'><i class='{{ config("other.font-awesome") }} fa-file'></i></span> @lang('torrent.similar')</a>
@@ -586,22 +585,6 @@
             </table>
         </div>
 
-        {{--<div class="table-responsive">
-            <table class="table table-condensed table-bordered table-striped">
-                <tbody>
-                <tr>
-                    <td>
-                        <div class="panel-body">
-                            @if ($movie->recommendations)
-                                {{ dd($movie->recommendations) }}
-                            @endif
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>--}}
-
         <div class="table-responsive">
             <table class="table table-condensed table-bordered table-striped">
                 <tbody>
@@ -638,7 +621,45 @@
     </div>
     <!-- /Info-->
 
-    <div class="torrent box container">
+    @if ($movie->recommendations)
+        <div class="torrent box container">
+            <section class="recommendations">
+                <div class="text-center">
+                    <h2><u>Recommendations</u></h2>
+                </div>
+                <div class="scroller">
+                    @foreach($movie->recommendations['results'] as $recommendation)
+                        <div class="item mini backdrop mini_card">
+                            <p class="tv flex">
+                                @if ($recommendation['exists'])
+                                <a href="{{ route('torrents.similar', ['category_id' => $torrent->category_id, 'tmdb' => $recommendation['id']]) }}">
+                                @else
+                                <a href="{{ route('add_request_form', ['title' => isset($recommendation['title']) ? $recommendation['title'] : $recommendation['name'], 'imdb' => 0, 'tmdb' => $recommendation['id']]) }}">
+                                @endif
+                                    <span class="text-bold">{{  isset($recommendation['title']) ? $recommendation['title'] : $recommendation['name'] }}</span>
+                                </a>
+                            </p>
+                            <div class="image_content">
+                                @if ($recommendation['exists'])
+                                <a href="{{ route('torrents.similar', ['category_id' => $torrent->category_id, 'tmdb' => $recommendation['id']]) }}">
+                                @else
+                                <a href="{{ route('add_request_form', ['title' => isset($recommendation['title']) ? $recommendation['title'] : $recommendation['name'], 'imdb' => 0, 'tmdb' => $recommendation['id']]) }}">
+                                @endif
+                                    <img class="backdrop" src="https://image.tmdb.org/t/p/w1280{{ $recommendation['backdrop_path'] }}">
+                                    <div class="meta">
+                                        <span class="release_date"><i class="fas fa-calendar"></i> Year: {{ isset($recommendation['release_date']) ? substr($recommendation['release_date'], 0, 4) : substr($recommendation['first_air_date'], 0, 4) }}</span>
+                                        <span class="vote_average"><i class="fas fa-star"></i> Rating: {{ $recommendation['vote_average'] }}</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+        </div>
+    @endif
+
+    <div class="torrent box container" id="comments">
         <!-- Comments -->
         <div class="clearfix"></div>
         <div class="row ">
@@ -677,7 +698,7 @@
                                                 @endif
                                                 <strong><a
                                                             href="{{ route('profile', ['username' => $comment->user->username, 'id' => $comment->user->id]) }}" style="color:{{ $comment->user->group->color }}"><span><i class="{{ $comment->user->group->icon }}"></i> {{ $comment->user->username }}</span></a></strong> @endif
-                                            <span class="text-muted"><small><em>{{$comment->created_at->diffForHumans() }}</em></small></span>
+                                            <span class="text-muted"><small><em>{{ $comment->created_at->toDayDateTimeString() }} ({{ $comment->created_at->diffForHumans() }})</em></small></span>
                                             @if ($comment->user_id == auth()->id() || auth()->user()->group->is_modo)
                                                 <a title="@lang('common.delete-comment')"
                                                    href="{{route('comment_delete',['comment_id'=>$comment->id])}}"><i
@@ -701,6 +722,7 @@
             </div>
             <!-- /Comments -->
 
+            <div class="clearfix"></div>
             <div class="col-md-12 home-pagination">
                 <div class="text-center">{{ $comments->links() }}</div>
             </div>
@@ -730,14 +752,14 @@
 @endsection
 
 @section('javascripts')
-    <script>
+    <script nonce="{{ Bepsvpt\SecureHeaders\SecureHeaders::nonce() }}">
       $(document).ready(function () {
         $('#content').wysibb({});
         emoji.textcomplete()
       })
     </script>
 
-    <script>
+    <script nonce="{{ Bepsvpt\SecureHeaders\SecureHeaders::nonce() }}">
       $(document).ready(function () {
 
         $('.slidingDiv').hide();
@@ -750,18 +772,22 @@
       })
     </script>
 
-    <script type="text/javascript">
-      function showTrailer () {
-        swal({
-          showConfirmButton: false,
-          showCloseButton: true,
-          background: '#232323',
-          width: 970,
-          html: '<iframe width="930" height="523" src="{{ str_replace("watch?v=","embed/",$movie->videoTrailer) }}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>',
-          title: '<i style="color: #a5a5a5;">{{ $movie->title }}</i>',
-          text: ''
-        })
-      }
+    <script nonce="{{ Bepsvpt\SecureHeaders\SecureHeaders::nonce() }}">
+        $('.show-trailer').each(function() {
+          $(this).off('click');
+          $(this).on('click', function(e) {
+            e.preventDefault();
+            swal({
+              showConfirmButton: false,
+              showCloseButton: true,
+              background: '#232323',
+              width: 970,
+              html: '<iframe width="930" height="523" src="{{ str_replace("watch?v=","embed/",$movie->videoTrailer) }}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>',
+              title: '<i style="color: #a5a5a5;">{{ $movie->title }}</i>',
+              text: ''
+            });
+          });
+        });
     </script>
 
 @endsection

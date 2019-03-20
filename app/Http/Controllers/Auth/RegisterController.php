@@ -13,18 +13,18 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
-use App\Group;
-use App\Invite;
 use Carbon\Carbon;
-use App\UserPrivacy;
+use App\Models\User;
+use App\Models\Group;
+use App\Models\Invite;
 use App\Rules\Captcha;
-use App\PrivateMessage;
-use App\UserActivation;
-use App\UserNotification;
+use App\Models\UserPrivacy;
 use Brian2694\Toastr\Toastr;
 use Illuminate\Http\Request;
+use App\Models\PrivateMessage;
+use App\Models\UserActivation;
 use App\Jobs\SendActivationMail;
+use App\Models\UserNotification;
 use App\Http\Controllers\Controller;
 use App\Repositories\ChatRepository;
 use Illuminate\Support\Facades\Hash;
@@ -80,7 +80,7 @@ class RegisterController extends Controller
                 ->with($this->toastr->error('Invalid or Expired Invite Key!', 'Whoops!', ['options']));
         }
 
-        $validatingGroup = Group::where('slug', '=', 'validating')->select('id')->first();
+        $validatingGroup = Group::select(['id'])->where('slug', '=', 'validating')->first();
         $user = new User();
         $user->username = $request->input('username');
         $user->email = $request->input('email');
@@ -180,7 +180,7 @@ class RegisterController extends Controller
             $selected = mt_rand(0, count($welcomeArray) - 1);
 
             $this->chat->systemMessage(
-                ":robot: [b][color=#fb9776]System[/color][/b] : {$welcomeArray[$selected]}"
+                "{$welcomeArray[$selected]}"
             );
 
             // Send Welcome PM

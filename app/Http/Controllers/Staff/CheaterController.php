@@ -13,7 +13,7 @@
 
 namespace App\Http\Controllers\Staff;
 
-use App\History;
+use App\Models\History;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
@@ -27,7 +27,7 @@ class CheaterController extends Controller
     public function leechCheaters()
     {
         $cheaters = History::with('user')
-            ->select('*')
+            ->select(['*'])
             ->join(
                 DB::raw('(SELECT MAX(id) AS id FROM history GROUP BY history.user_id) AS unique_history'),
                 function ($join) {

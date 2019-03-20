@@ -3,9 +3,11 @@
         <a href="{{ route('profile', ['slug' => $user->slug, 'id' => $user->id]) }}" class="btn btn-sm btn-primary">
             @lang('user.profile')
         </a>
+        @if(!$user->group || !$user->group->is_immune)
         <a href="{{ route('user_unsatisfieds', ['slug' => $user->slug, 'id' => $user->id]) }}" class="btn btn-sm btn-primary">
             <i class="{{ config('other.font-awesome') }} fa-exclamation"></i> @lang('user.unsatisfieds')
         </a>
+        @endif
         <a href="{{ route('user_torrents', ['slug' => $user->slug, 'id' => $user->id]) }}" class="btn btn-sm btn-primary">
             @lang('user.torrents')
         </a>
@@ -20,9 +22,6 @@
         </a>
         <a href="{{ route('user_seeds', ['slug' => $user->slug, 'id' => $user->id]) }}" class="btn btn-sm btn-primary">
             @lang('user.seeds')
-        </a>
-        <a href="{{ route('user_resurrections', ['slug' => $user->slug, 'id' => $user->id]) }}" class="btn btn-sm btn-primary">
-            @lang('user.resurrections')
         </a>
         @if(auth()->user()->id == $user->id)
         @if(!$route || $route != 'profile')

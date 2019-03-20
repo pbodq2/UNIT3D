@@ -13,7 +13,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Group;
+use App\Models\Group;
 use App\Rules\Captcha;
 use Brian2694\Toastr\Toastr;
 use Illuminate\Http\Request;
@@ -77,10 +77,10 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        $bannedGroup = Group::where('slug', '=', 'banned')->select('id')->first();
-        $validatingGroup = Group::where('slug', '=', 'validating')->select('id')->first();
-        $disabledGroup = Group::where('slug', '=', 'disabled')->select('id')->first();
-        $memberGroup = Group::where('slug', '=', 'user')->select('id')->first();
+        $bannedGroup = Group::select(['id'])->where('slug', '=', 'banned')->first();
+        $validatingGroup = Group::select(['id'])->where('slug', '=', 'validating')->first();
+        $disabledGroup = Group::select(['id'])->where('slug', '=', 'disabled')->first();
+        $memberGroup = Group::select(['id'])->where('slug', '=', 'user')->first();
 
         if ($user->active == 0 || $user->group_id == $validatingGroup->id) {
             $this->guard()->logout();

@@ -14,8 +14,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Group;
 use Carbon\Carbon;
+use App\Models\Group;
 
 class CheckIfOnline
 {
@@ -30,7 +30,7 @@ class CheckIfOnline
     public function handle($request, Closure $next)
     {
         $user = auth()->user();
-        $bannedGroup = Group::where('slug', '=', 'banned')->select('id')->first();
+        $bannedGroup = Group::select(['id'])->where('slug', '=', 'banned')->first();
 
         if (auth()->check() && $user->group_id != $bannedGroup->id) {
             $expiresAt = Carbon::now()->addMinutes(60);

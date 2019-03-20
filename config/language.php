@@ -98,7 +98,7 @@ return [
     |
     */
 
-    'allowed'       => ['ar', 'bg', 'bn', 'cn', 'cs', 'da', 'de', 'en', 'es', 'et', 'ir', 'fr', 'gr', 'it', 'nl', 'pl', 'pt', 'br', 'ro', 'ru', 'tr', 'tw'],
+    'allowed'       => ['ar', 'bg', 'bn', 'cn', 'cs', 'da', 'de', 'en', 'es', 'et', 'ir', 'fr', 'gr', 'it', 'nl', 'pl', 'pt', 'pt-BR', 'ro', 'ru', 'tr', 'tw'],
 
     /*
     |--------------------------------------------------------------------------
@@ -143,7 +143,7 @@ return [
         ['short' => 'nb',       'long' => 'nb-NO',      'english' => 'Norwegian',           'native' => 'Norsk Bokmål'],
         ['short' => 'nl',       'long' => 'nl-NL',      'english' => 'Dutch',               'native' => 'Nederlands'],
         ['short' => 'pl',       'long' => 'pl-PL',      'english' => 'Polish',              'native' => 'Polski'],
-        ['short' => 'br',       'long' => 'br-BR',      'english' => 'Brazilian',           'native' => 'Português do Brasil'],
+        ['short' => 'pt-BR',    'long' => 'pt-BR',      'english' => 'Brazilian',           'native' => 'Português do Brasil'],
         ['short' => 'pt',       'long' => 'pt-PT',      'english' => 'Portuguese',          'native' => 'Português'],
         ['short' => 'ro',       'long' => 'ro-RO',      'english' => 'Romanian',            'native' => 'Română'],
         ['short' => 'ru',       'long' => 'ru-RU',      'english' => 'Russian',             'native' => 'Русский'],
@@ -153,6 +153,6 @@ return [
         ['short' => 'tr',       'long' => 'tr-TR',      'english' => 'Turkish',             'native' => 'Türkçe'],
         ['short' => 'tw',       'long' => 'zh-TW',      'english' => 'Chinese (T)',         'native' => '繁體中文'],
         ['short' => 'uk',       'long' => 'uk-UA',      'english' => 'Ukrainian',           'native' => 'Українська'],
-        ['short' => 'vn',       'long' => 'vi-VN',      'english' => 'Vietnamese',          'native' => 'Tiếng Việt'],
+        ['short' => 'vi',       'long' => 'vi-VN',      'english' => 'Vietnamese',          'native' => 'Tiếng Việt'],
     ],
 ];

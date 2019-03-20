@@ -13,17 +13,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Post;
-use App\User;
-use App\Torrent;
 use Carbon\Carbon;
-use App\BonExchange;
-use App\PrivateMessage;
-use App\BonTransactions;
-use App\PersonalFreeleech;
+use App\Models\Post;
+use App\Models\User;
+use App\Models\Torrent;
+use App\Models\BonExchange;
 use Brian2694\Toastr\Toastr;
 use Illuminate\Http\Request;
 use App\Notifications\NewBon;
+use App\Models\PrivateMessage;
+use App\Models\BonTransactions;
+use App\Models\PersonalFreeleech;
 use App\Notifications\NewPostTip;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\NewUploadTip;
@@ -376,7 +376,7 @@ class BonusController extends Controller
             $recipient_url = hrefProfile($recipient);
 
             $this->chat->systemMessage(
-                ":robot: [b][color=#fb9776]System[/color][/b] : [url={$profile_url}]{$user->username}[/url] has gifted {$value} BON to [url={$recipient_url}]{$recipient->username}[/url]"
+                "[url={$profile_url}]{$user->username}[/url] has gifted {$value} BON to [url={$recipient_url}]{$recipient->username}[/url]"
             );
 
             if ($dest == 'profile') {
@@ -531,7 +531,7 @@ class BonusController extends Controller
         $user = auth()->user();
 
         return DB::table('peers')
-            ->select('peers.hash')->distinct()
+            ->select(['peers.hash'])->distinct()
             ->join('torrents', 'torrents.id', '=', 'peers.torrent_id')
             ->where('peers.seeder', 1)
             ->where('torrents.seeders', 1)
@@ -550,7 +550,7 @@ class BonusController extends Controller
         $user = auth()->user();
 
         return DB::table('peers')
-            ->select('peers.hash')->distinct()
+            ->select(['peers.hash'])->distinct()
             ->join('torrents', 'torrents.id', '=', 'peers.torrent_id')
             ->whereRaw('torrents.created_at < date_sub(now(), interval 12 month)')
             ->whereRaw('date_sub(peers.created_at,interval 30 minute) < now()')
@@ -569,7 +569,7 @@ class BonusController extends Controller
         $user = auth()->user();
 
         return DB::table('peers')
-            ->select('peers.hash')->distinct()
+            ->select(['peers.hash'])->distinct()
             ->join('torrents', 'torrents.id', '=', 'peers.torrent_id')
             ->whereRaw('torrents.created_at < date_sub(now(), Interval 6 month)')
             ->whereRaw('torrents.created_at > date_sub(now(), interval 12 month)')
@@ -589,7 +589,7 @@ class BonusController extends Controller
         $user = auth()->user();
 
         return DB::table('peers')
-            ->select('peers.hash')->distinct()
+            ->select(['peers.hash'])->distinct()
             ->join('torrents', 'torrents.id', '=', 'peers.torrent_id')
             ->where('peers.seeder', 1)
             ->where('torrents.size', '>=', 1073741824 * 100)
@@ -607,7 +607,7 @@ class BonusController extends Controller
         $user = auth()->user();
 
         return DB::table('peers')
-            ->select('peers.hash')->distinct()
+            ->select(['peers.hash'])->distinct()
             ->join('torrents', 'torrents.id', '=', 'peers.torrent_id')
             ->where('peers.seeder', 1)
             ->where('torrents.size', '>=', 1073741824 * 25)
@@ -626,7 +626,7 @@ class BonusController extends Controller
         $user = auth()->user();
 
         return DB::table('peers')
-            ->select('peers.hash')->distinct()
+            ->select(['peers.hash'])->distinct()
             ->join('torrents', 'torrents.id', '=', 'peers.torrent_id')
             ->where('peers.seeder', 1)
             ->where('torrents.size', '>=', 1073741824)
@@ -645,7 +645,7 @@ class BonusController extends Controller
         $user = auth()->user();
 
         return DB::table('history')
-            ->select('history.seedtime')->distinct()
+            ->select(['history.seedtime'])->distinct()
             ->join('torrents', 'torrents.info_hash', '=', 'history.info_hash')
             ->where('history.active', 1)
             ->where('history.seedtime', '>=', 2592000)
@@ -664,7 +664,7 @@ class BonusController extends Controller
         $user = auth()->user();
 
         return DB::table('history')
-            ->select('history.seedtime')->distinct()
+            ->select(['history.seedtime'])->distinct()
             ->join('torrents', 'torrents.info_hash', '=', 'history.info_hash')
             ->where('history.active', 1)
             ->where('history.seedtime', '>=', 2592000 * 2)
@@ -683,7 +683,7 @@ class BonusController extends Controller
         $user = auth()->user();
 
         return DB::table('history')
-            ->select('history.seedtime')->distinct()
+            ->select(['history.seedtime'])->distinct()
             ->join('torrents', 'torrents.info_hash', '=', 'history.info_hash')
             ->where('history.active', 1)
             ->where('history.seedtime', '>=', 2592000 * 3)
@@ -702,7 +702,7 @@ class BonusController extends Controller
         $user = auth()->user();
 
         return DB::table('history')
-            ->select('history.seedtime')->distinct()
+            ->select(['history.seedtime'])->distinct()
             ->join('torrents', 'torrents.info_hash', '=', 'history.info_hash')
             ->where('history.active', 1)
             ->where('history.seedtime', '>=', 2592000 * 6)
@@ -721,7 +721,7 @@ class BonusController extends Controller
         $user = auth()->user();
 
         return DB::table('history')
-            ->select('history.seedtime')->distinct()
+            ->select(['history.seedtime'])->distinct()
             ->join('torrents', 'torrents.info_hash', '=', 'history.info_hash')
             ->where('history.active', 1)
             ->where('history.seedtime', '>=', 2592000 * 12)

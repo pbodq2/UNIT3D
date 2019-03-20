@@ -13,16 +13,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Peer;
-use App\User;
-use App\Group;
-use App\History;
-use App\Torrent;
 use Carbon\Carbon;
-use App\FreeleechToken;
-use App\Services\Bencode;
-use App\PersonalFreeleech;
+use App\Models\Peer;
+use App\Models\User;
+use App\Models\Group;
+use App\Models\History;
+use App\Models\Torrent;
+use App\Helpers\Bencode;
 use Illuminate\Http\Request;
+use App\Models\FreeleechToken;
+use App\Models\PersonalFreeleech;
 
 class AnnounceController extends Controller
 {
@@ -418,8 +418,10 @@ class AnnounceController extends Controller
         $torrent->save();
 
         $res = [];
-        $res['interval'] = (60 * 45);
-        $res['min interval'] = (60 * 30);
+        $min = 2400; // 40 Minutes
+        $max = 3600; // 60 Minutes
+        $res['interval'] = rand($min, $max);
+        $res['min interval'] = 1800; // 30 Minutes
         $res['tracker_id'] = $md5_peer_id; // A string that the client should send back on its next announcements.
         $res['complete'] = $torrent->seeders;
         $res['incomplete'] = $torrent->leechers;

@@ -1,9 +1,5 @@
 <?php
-/*
- * |--------------------------------------------------------------------------
- * | Torrent Language Lines
- * |--------------------------------------------------------------------------
- */
+
 return [
     'age'                      => 'Wiek',
     'agent'                    => 'Klient',
@@ -60,7 +56,7 @@ return [
     'freeleech-token'          => 'Freeleech token',
     'general'                  => 'Ogólne',
     'genre'                    => 'Gatunek',
-    'global-freelech'          => 'Globalny freeleech',
+    'global-freeleech'         => 'Globalny freeleech',
     'grant'                    => 'Nadaj',
     'greater-than'             => 'Więcej niż',
     'grouping'                 => 'Grupowanie',
@@ -73,7 +69,7 @@ return [
     'info'                     => 'Info',
     'internal'                 => 'Wewnętrzne',
     'internal-release'         => 'Wewnętrzna publikacja',
-    'last-seed-activity'       => 'Aktywność ostatniego seed\'a',
+    'last-seed-activity'       => 'Aktywność ostatniego seeda',
     'last-seeder'              => 'Jesteś ostatnim seedującym! (a torrent został pobrany przynajmniej 3 razy)',
     'last-update'              => 'Ostatnia aktualizacja',
     'leave-tip'                => 'Daj napiwek',
@@ -135,7 +131,7 @@ return [
     'similar'                  => 'Podobne torrenty do',
     'size'                     => 'Rozmiar',
     'special'                  => 'Specjalne',
-    'special-freeleech'        => 'Specjalny freelech',
+    'special-freeleech'        => 'Specjalny freeleech',
     'started'                  => 'Rozpoczęto',
     'sticky'                   => 'Przyklej',
     'stream-optimized'         => 'Można streamować',
@@ -166,7 +162,7 @@ return [
     'updated_at'               => 'Zaktualizowano',
     'uploaded'                 => 'Uploadowane',
     'uploader'                 => 'Uploader',
-    'use-fl-token'             => 'Użyj tokenu Freelech',
+    'use-fl-token'             => 'Użyj tokenu Freeleech',
     'video'                    => 'Video',
     'view-more'                => 'Zobacz więcej',
     'view-trailer'             => 'Zobacz trailer',

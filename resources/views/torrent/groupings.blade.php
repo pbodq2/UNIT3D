@@ -251,7 +251,7 @@
                                         <div class="card_alt">
                                             <div class="body_poster">
                                                 @if($t->movie && $t->movie->poster)
-                                                    <img src="{{ $t->movie->poster }}">
+                                                    <img src="{{ $t->movie->poster }}" class="show-poster" data-image='<img src="{{ $t->movie->poster }}" alt="@lang('torrent.poster')" style="height: 1000px;">'>
                                                 @else
                                                     <img src="https://via.placeholder.com/600x900" />
                                                 @endif
@@ -284,9 +284,9 @@
                                                                     <th>@lang('torrent.name')</th>
                                                                     <th><i class="{{ config('other.font-awesome') }} fa-clock"></i></th>
                                                                     <th><i class="{{ config('other.font-awesome') }} fa-file"></i></th>
-                                                                    <th><i class="{{ config('other.font-awesome') }} fa-check-square"></i></th>
                                                                     <th><i class="{{ config('other.font-awesome') }} fa-arrow-circle-up"></i></th>
                                                                     <th><i class="{{ config('other.font-awesome') }} fa-arrow-circle-down"></i></th>
+                                                                    <th><i class="{{ config('other.font-awesome') }} fa-check-square"></i></th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -412,7 +412,7 @@
                             </span>
                                                                                 @endif
 
-                                                                                @php $freeleech_token = \App\FreeleechToken::where('user_id', '=', $user->id)->where('torrent_id', '=', $current->id)->first(); @endphp
+                                                                                @php $freeleech_token = \App\Models\FreeleechToken::where('user_id', '=', $user->id)->where('torrent_id', '=', $current->id)->first(); @endphp
                                                                                 @if ($freeleech_token)
                                                                                     <span class='badge-extra text-bold'>
                                 <i class='{{ config("other.font-awesome") }} fa-coins text-bold' data-toggle='tooltip' title=''
@@ -437,7 +437,7 @@
                                                                                 @if (config('other.freeleech') == 1)
                                                                                     <span class='badge-extra text-bold'>
                                 <i class='{{ config("other.font-awesome") }} fa-globe text-blue' data-toggle='tooltip' title=''
-                                   data-original-title='@lang('torrent.global-freelech')'></i> @lang('torrent.global-freelech')
+                                   data-original-title='@lang('torrent.global-freeleech')'></i> @lang('torrent.global-freeleech')
                             </span>
                                                                                 @endif
 
@@ -490,13 +490,6 @@
                                                                                 <span class='badge-extra text-blue text-bold'>{{ $current->getSize() }}</span>
                                                                             </td>
                                                                             <td>
-                                                                                <a href="{{ route('history', ['slug' => $current->slug, 'id' => $current->id]) }}">
-                            <span class='badge-extra text-orange text-bold'>
-                                {{ $current->times_completed }} @lang('common.times')
-                            </span>
-                                                                                </a>
-                                                                            </td>
-                                                                            <td>
                                                                                 <a href="{{ route('peers', ['slug' => $current->slug, 'id' => $current->id]) }}">
                             <span class='badge-extra text-green text-bold'>
                                 {{ $current->seeders }}
@@ -507,6 +500,13 @@
                                                                                 <a href="{{ route('peers', ['slug' => $current->slug, 'id' => $current->id]) }}">
                             <span class='badge-extra text-red text-bold'>
                                 {{ $current->leechers }}
+                            </span>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td>
+                                                                                <a href="{{ route('history', ['slug' => $current->slug, 'id' => $current->id]) }}">
+                            <span class='badge-extra text-orange text-bold'>
+                                {{ $current->times_completed }} @lang('common.times')
                             </span>
                                                                                 </a>
                                                                             </td>
