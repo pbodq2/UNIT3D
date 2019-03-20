@@ -11,7 +11,7 @@
  * @author     HDVinnie
  */
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,6 +21,7 @@ class Authentication extends Model
     const TYPE_LOGIN = 'login';
     const TYPE_FAILED = 'failed';
     const TYPE_LOCKOUT = 'lockout';
+    const TYPE_LOGOUT = 'logout';
 
     /**
      * The Attributes That Should Be Casted To Native Types.
