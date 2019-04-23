@@ -37,8 +37,7 @@ class CasinoBot
 
     /**
      * NerdBot Constructor.
-     *
-     * @param Toastr $toastr
+     * @param  ChatRepository  $chat
      */
     public function __construct(ChatRepository $chat)
     {
@@ -51,6 +50,8 @@ class CasinoBot
 
     /**
      * Replace Vars.
+     * @param $output
+     * @return mixed
      */
     public function replaceVars($output)
     {
@@ -70,6 +71,9 @@ class CasinoBot
 
     /**
      * Send Bot Donation.
+     * @param  int  $amount
+     * @param  string  $note
+     * @return string
      */
     public function putDonate($amount = 0, $note = '')
     {
@@ -107,6 +111,8 @@ class CasinoBot
 
     /**
      * Get Bot Donations.
+     * @param  string  $duration
+     * @return string
      */
     public function getDonations($duration = 'default')
     {
@@ -135,6 +141,11 @@ class CasinoBot
 
     /**
      * Process Message.
+     * @param $type
+     * @param  User  $target
+     * @param  string  $message
+     * @param  int  $targeted
+     * @return bool
      */
     public function process($type, User $target, $message = '', $targeted = 0)
     {

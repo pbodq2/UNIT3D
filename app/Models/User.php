@@ -580,6 +580,10 @@ class User extends Authenticatable
     /**
      * Get the Users accepts notification as bool.
      *
+     * @param  self  $sender
+     * @param  self  $target
+     * @param  string  $group
+     * @param  bool  $type
      * @return int
      */
     public function acceptsNotification(self $sender, self $target, $group = 'follower', $type = false)
@@ -615,6 +619,9 @@ class User extends Authenticatable
     /**
      * Get the Users allowed answer as bool.
      *
+     * @param  self  $target
+     * @param  string  $group
+     * @param  bool  $type
      * @return int
      */
     public function isVisible(self $target, $group = 'profile', $type = false)
@@ -651,6 +658,9 @@ class User extends Authenticatable
     /**
      * Get the Users allowed answer as bool.
      *
+     * @param  self  $target
+     * @param  string  $group
+     * @param  bool  $type
      * @return int
      */
     public function isAllowed(self $target, $group = 'profile', $type = false)
@@ -715,13 +725,13 @@ class User extends Authenticatable
 
     /**
      * Return Upload In Human Format.
+     * @param  null  $bytes
+     * @param  int  $precision
+     * @return string
      */
     public function getUploaded($bytes = null, $precision = 2)
     {
-        $bytes = History::where('user_id', '=', $this->id)->sum('uploaded');
-        $bonupload = BonTransactions::where('sender', '=', $this->id)->where([['name', 'like', '%Upload%']])->sum('cost');
-        $starter_upload = config('other.default_upload');
-        $bytes = $bytes + $bonupload + $starter_upload;
+        $bytes = $this->uploaded;
 
         if ($bytes > 0) {
             return StringHelper::formatBytes((float) $bytes, 2);
@@ -732,13 +742,13 @@ class User extends Authenticatable
 
     /**
      * Return Download In Human Format.
+     * @param  null  $bytes
+     * @param  int  $precision
+     * @return string
      */
     public function getDownloaded($bytes = null, $precision = 2)
     {
-        $bytes = History::where('user_id', '=', $this->id)->sum('downloaded');
-        $bondownload = BonTransactions::where('sender', '=', $this->id)->where([['name', 'like', '%Download%']])->sum('cost');
-        $starter_download = config('other.default_download');
-        $bytes = $bytes + $starter_download - $bondownload;
+        $bytes = $this->downloaded;
 
         if ($bytes > 0) {
             return StringHelper::formatBytes((float) $bytes, 2);

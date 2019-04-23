@@ -120,11 +120,6 @@ Route::group(['middleware' => 'language'], function () {
         Route::get('/categories', 'CategoryController@categories')->name('categories');
         Route::get('/categories/{slug}.{id}', 'CategoryController@category')->name('category');
 
-        // Catalogs
-        Route::get('/catalogs', 'CatalogController@catalogs')->name('catalogs');
-        Route::get('/catalog/{slug}.{id}', 'CatalogController@catalog')->name('catalog');
-        Route::get('/catalog/torrents/{imdb}', 'CatalogController@torrents')->name('catalog_torrents');
-
         // Contact Us
         Route::get('/contact', 'ContactController@index')->name('contact');
         Route::post('/contact', 'ContactController@contact')->name('sendContact');
@@ -303,6 +298,7 @@ Route::group(['middleware' => 'language'], function () {
         Route::get('/{slug}.{id}/settings/private', 'UserController@makePrivate')->name('user_private');
         Route::get('/{slug}.{id}/settings/public', 'UserController@makePublic')->name('user_public');
         Route::get('/{slug}.{id}/invites', 'InviteController@invites')->name('user_invites');
+        Route::post('/accept-rules', 'UserController@acceptRules')->name('accept.rules');
 
         // User Wishlist
         Route::get('/{slug}.{id}/wishlist', 'UserController@wishes')->name('user_wishlist');
@@ -363,10 +359,10 @@ Route::group(['middleware' => 'language'], function () {
 
     /*
     |------------------------------------------
-    | ShoutBox Routes Group (when authorized)
+    | ChatBox Routes Group (when authorized)
     |------------------------------------------
     */
-    Route::group(['prefix' => 'chatbox', 'middleware' => ['auth', 'twostep', 'online', 'banned', 'active', 'private']], function () {
+    Route::group(['prefix' => 'chatbox', 'middleware' => ['auth', 'twostep', 'online', 'banned', 'active', 'private'], 'namespace' => 'API'], function () {
         Route::get('/', 'ChatController@index');
         Route::get('chatrooms', 'ChatController@fetchChatrooms');
         Route::post('change-chatroom', 'ChatController@changeChatroom');
@@ -522,17 +518,6 @@ Route::group(['middleware' => 'language'], function () {
         Route::get('/reports/{report_id}', 'ReportController@getReport')->name('getReport');
         Route::post('/reports/{report_id}/solve', 'ReportController@solveReport')->name('solveReport');
 
-        // Catalog Groups
-        Route::get('/catalogs', 'CatalogController@getCatalogs')->name('getCatalog');
-        Route::post('/catalogs', 'CatalogController@postCatalog')->name('postCatalog');
-        Route::get('/catalogs/{genre_id}/delete', 'CatalogController@deleteCatalog')->name('deleteCatalog');
-        Route::post('/catalogs/{catalog_id}/edit', 'CatalogController@editCatalog')->name('editCatalog');
-
-        // Catalog Torrents
-        Route::get('/catalog_torrent', 'CatalogController@getCatalogTorrent')->name('getCatalogTorrent');
-        Route::post('/catalog_torrent', 'CatalogController@postCatalogTorrent')->name('postCatalogTorrent');
-        Route::get('/catalog/{catalog_id}/records', 'CatalogController@getCatalogRecords')->name('getCatalogRecords');
-
         // Categories
         Route::get('/categories', 'CategoryController@index')->name('staff_category_index');
         Route::get('/categories/new', 'CategoryController@addForm')->name('staff_category_add_form');
@@ -609,7 +594,9 @@ Route::group(['middleware' => 'language'], function () {
 
         // Backup Manager
         Route::get('/backup', 'BackupController@index')->name('backupManager');
-        Route::post('/backup/create', 'BackupController@create');
+        Route::post('/backup/create-full', 'BackupController@create');
+        Route::post('/backup/create-files', 'BackupController@createFilesOnly');
+        Route::post('/backup/create-db', 'BackupController@createDatabaseOnly');
         Route::get('/backup/download/{file_name?}', 'BackupController@download');
         Route::post('/backup/delete', 'BackupController@delete');
 
@@ -645,5 +632,18 @@ Route::group(['middleware' => 'language'], function () {
         // Registered Seedboxes
         Route::get('/seedboxes', 'SeedboxController@index')->name('staff.seedbox.index');
         Route::delete('/seedboxes/{id}', 'SeedboxController@destroy')->name('staff.seedbox.destroy');
+
+        // Commands
+        Route::get('/commands', 'CommandController@index')->name('staff.commands.index');
+        Route::get('/command/maintance-enable', 'CommandController@maintanceEnable');
+        Route::get('/command/maintance-disable', 'CommandController@maintanceDisable');
+        Route::get('/command/clear-cache', 'CommandController@clearCache');
+        Route::get('/command/clear-view-cache', 'CommandController@clearView');
+        Route::get('/command/clear-route-cache', 'CommandController@clearRoute');
+        Route::get('/command/clear-config-cache', 'CommandController@clearConfig');
+        Route::get('/command/clear-all-cache', 'CommandController@clearAllCache');
+        Route::get('/command/set-all-cache', 'CommandController@setAllCache');
+        Route::get('/command/clear-compiled', 'CommandController@clearCompiled');
+        Route::get('/command/test-email', 'CommandController@testEmail');
     });
 });

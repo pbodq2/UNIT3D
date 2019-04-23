@@ -20,8 +20,6 @@ use App\Models\Ban;
 use App\Models\Peer;
 use App\Models\Post;
 use App\Models\User;
-use App\Models\Wish;
-use App\Models\Forum;
 use App\Models\Group;
 use App\Models\Topic;
 use App\Models\Client;
@@ -31,10 +29,8 @@ use App\Models\History;
 use App\Models\Torrent;
 use App\Models\Warning;
 use App\Helpers\Bencode;
-use App\Models\Bookmark;
 use App\Models\Graveyard;
 use App\Models\UserPrivacy;
-use Brian2694\Toastr\Toastr;
 use Illuminate\Http\Request;
 use App\Models\PrivateMessage;
 use App\Models\TorrentRequest;
@@ -46,21 +42,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * @var Toastr
-     */
-    private $toastr;
-
-    /**
-     * UserController Constructor.
-     *
-     * @param Toastr $toastr
-     */
-    public function __construct(Toastr $toastr)
-    {
-        $this->toastr = $toastr;
-    }
-
     /**
      * Get Users List.
      *
@@ -111,11 +92,8 @@ class UserController extends Controller
         $bonupload = BonTransactions::where('sender', '=', $id)->where([['name', 'like', '%Upload%']])->sum('cost');
         $bondownload = BonTransactions::where('sender', '=', $id)->where([['name', 'like', '%Download%']])->sum('cost');
 
-        $hackupload = $user->history->sum('uploaded') + $bonupload;
-        $hackdownload = $user->history->sum('downloaded') + $bondownload;
-
-        $realupload = $hackupload - $bonupload;
-        $realdownload = $hackdownload - $bondownload;
+        $realupload = $user->uploaded - $bonupload;
+        $realdownload = $user->downloaded + $bondownload;
 
         $invitedBy = Invite::where('accepted_by', '=', $user->id)->first();
 
@@ -143,8 +121,10 @@ class UserController extends Controller
     /**
      * User Followers.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
+     * @param $slug
+     * @param  int  $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function followers(Request $request, $slug, int $id)
@@ -162,8 +142,10 @@ class UserController extends Controller
     /**
      * User Topics.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
+     * @param $slug
+     * @param  int  $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function topics(Request $request, $slug, int $id)
@@ -181,8 +163,10 @@ class UserController extends Controller
     /**
      * User Posts.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      *
+     * @param $slug
+     * @param  int  $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function posts(Request $request, $slug, int $id)
@@ -244,13 +228,13 @@ class UserController extends Controller
                             $image->move(public_path('/files/img/'), $filename);
                         } else {
                             return redirect()->route('profile', ['username' => $user->username, 'id' => $user->id])
-                                ->with($this->toastr->error('Because you are uploading a GIF, your avatar must be symmetrical!', 'Whoops!', ['options']));
+                                ->withErrors('Because you are uploading a GIF, your avatar must be symmetrical!');
                         }
                     }
                     $user->image = $user->username.'.'.$image->getClientOriginalExtension();
                 } else {
                     return redirect()->route('profile', ['username' => $user->username, 'id' => $user->id])
-                        ->with($this->toastr->error('Your avatar is too large, max file size: '.($max_upload / 1000000).' MB', 'Whoops!', ['options']));
+                        ->withErrors('Your avatar is too large, max file size: '.($max_upload / 1000000).' MB');
                 }
             }
         }
@@ -265,7 +249,7 @@ class UserController extends Controller
         \LogActivity::addToLog("Member {$user->username} has updated there profile.");
 
         return redirect()->route('user_edit_profile_form', ['username' => $user->slug, 'id' => $user->id])
-            ->with($this->toastr->success('Your Account Was Updated Successfully!', 'Yay!', ['options']));
+            ->withSuccess('Your Account Was Updated Successfully!');
     }
 
     /**
@@ -307,7 +291,7 @@ class UserController extends Controller
         $css_url = $request->input('custom_css');
         if (isset($css_url) && filter_var($css_url, FILTER_VALIDATE_URL) === false) {
             return redirect()->route('profile', ['username' => $user->username, 'id' => $user->id])
-                ->with($this->toastr->error('The URL for the external CSS stylesheet is invalid, try it again with a valid URL.', 'Whoops!', ['options']));
+                ->withErrors('The URL for the external CSS stylesheet is invalid, try it again with a valid URL.');
         } else {
             $user->custom_css = $css_url;
         }
@@ -324,7 +308,7 @@ class UserController extends Controller
         \LogActivity::addToLog("Member {$user->username} has changed their account settings.");
 
         return redirect()->route('user_settings', ['slug' => $user->slug, 'id' => $user->id])
-            ->with($this->toastr->success('Your Account Was Updated Successfully!', 'Yay!', ['options']));
+            ->withSuccess('Your Account Was Updated Successfully!');
     }
 
     /**
@@ -358,7 +342,7 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('user_profile', ['slug' => $user->slug, 'id' => $user->id])
-            ->with($this->toastr->success('You Changed Your TwoStep Auth Status!', 'Yay!', ['options']));
+            ->withSuccess('You Changed Your TwoStep Auth Status!');
     }
 
     /**
@@ -384,14 +368,14 @@ class UserController extends Controller
                 // Activity Log
                 \LogActivity::addToLog("Member {$user->username} has changed there account password.");
 
-                return redirect('/')->with($this->toastr->success('Your Password Has Been Reset', 'Yay!', ['options']));
+                return redirect('/')->withSuccess('Your Password Has Been Reset');
             } else {
                 return redirect()->route('user_security', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#password'])
-                    ->with($this->toastr->error('Your Password Was Incorrect!', 'Whoops!', ['options']));
+                    ->withErrors('Your Password Was Incorrect!');
             }
         } else {
             return redirect()->route('user_security', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#password'])
-                ->with($this->toastr->error('Your New Password Is To Weak!', 'Whoops!', ['options']));
+                ->withErrors('Your New Password Is To Weak!');
         }
     }
 
@@ -424,7 +408,7 @@ class UserController extends Controller
 
         if ($v->fails()) {
             return redirect()->route('user_security', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#email'])
-                ->with($this->toastr->error($v->errors()->toJson(), 'Whoops!', ['options']));
+                ->withErrors($v->errors());
         } else {
             $user->email = $request->input('email');
             $user->save();
@@ -433,7 +417,7 @@ class UserController extends Controller
             \LogActivity::addToLog("Member {$user->username} has changed there email address on file.");
 
             return redirect()->route('user_security', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#email'])
-                ->with($this->toastr->success('Your Email Was Updated Successfully!', 'Yay!', ['options']));
+                ->withSuccess('Your Email Was Updated Successfully!');
         }
     }
 
@@ -453,7 +437,7 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('user_profile', ['slug' => $user->slug, 'id' => $user->id])
-            ->with($this->toastr->success('You Have Gone Private!', 'Yay!', ['options']));
+            ->withSuccess('You Have Gone Private!');
     }
 
     /**
@@ -472,7 +456,7 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('user_profile', ['slug' => $user->slug, 'id' => $user->id])
-            ->with($this->toastr->success('You Have Gone Public!', 'Yay!', ['options']));
+            ->withSuccess('You Have Gone Public!');
     }
 
     /**
@@ -491,7 +475,7 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('user_profile', ['slug' => $user->slug, 'id' => $user->id])
-            ->with($this->toastr->success('You Have Disabled Notifications!', 'Yay!', ['options']));
+            ->withSuccess('You Have Disabled Notifications!');
     }
 
     /**
@@ -510,7 +494,7 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('user_profile', ['slug' => $user->slug, 'id' => $user->id])
-            ->with($this->toastr->success('You Have Enabled Notifications!', 'Yay!', ['options']));
+            ->withSuccess('You Have Enabled Notifications!');
     }
 
     /**
@@ -529,7 +513,7 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('user_profile', ['slug' => $user->slug, 'id' => $user->id])
-            ->with($this->toastr->success('You Have Disappeared Like A Ninja!', 'Yay!', ['options']));
+            ->withSuccess('You Have Disappeared Like A Ninja!');
     }
 
     /**
@@ -548,7 +532,7 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('user_profile', ['slug' => $user->slug, 'id' => $user->id])
-            ->with($this->toastr->success('You Have Given Up Your Ninja Ways And Become Visible!', 'Yay!', ['options']));
+            ->withSuccess('You Have Given Up Your Ninja Ways And Become Visible!');
     }
 
     /**
@@ -570,7 +554,7 @@ class UserController extends Controller
         \LogActivity::addToLog("Member {$user->username} has changed their account PID.");
 
         return redirect()->route('user_security', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#pid'])
-            ->with($this->toastr->success('Your PID Was Changed Successfully!', 'Yay!', ['options']));
+            ->withSuccess('Your PID Was Changed Successfully!');
     }
 
     /**
@@ -603,7 +587,8 @@ class UserController extends Controller
         $privacy->show_online = ($request->input('show_online') && $request->input('show_online') == 1 ? 1 : 0);
         $privacy->save();
 
-        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#other'])->with($this->toastr->success('Your Other Privacy Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#other'])
+            ->withSuccess('Your Other Privacy Settings Have Been Saved!');
     }
 
     /**
@@ -636,7 +621,8 @@ class UserController extends Controller
         $privacy->show_requested = ($request->input('show_requested') && $request->input('show_requested') == 1 ? 1 : 0);
         $privacy->save();
 
-        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#request'])->with($this->toastr->success('Your Request Privacy Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#request'])
+            ->withSuccess('Your Request Privacy Settings Have Been Saved!');
     }
 
     /**
@@ -669,7 +655,8 @@ class UserController extends Controller
         $privacy->show_achievement = ($request->input('show_achievement') && $request->input('show_achievement') == 1 ? 1 : 0);
         $privacy->save();
 
-        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#achievement'])->with($this->toastr->success('Your Achievement Privacy Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#achievement'])
+            ->withSuccess('Your Achievement Privacy Settings Have Been Saved!');
     }
 
     /**
@@ -703,7 +690,8 @@ class UserController extends Controller
         $privacy->show_post = ($request->input('show_post') && $request->input('show_post') == 1 ? 1 : 0);
         $privacy->save();
 
-        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#forum'])->with($this->toastr->success('Your Forum History Privacy Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#forum'])
+            ->withSuccess('Your Forum History Privacy Settings Have Been Saved!');
     }
 
     /**
@@ -736,7 +724,8 @@ class UserController extends Controller
         $privacy->show_follower = ($request->input('show_follower') && $request->input('show_follower') == 1 ? 1 : 0);
         $privacy->save();
 
-        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#follower'])->with($this->toastr->success('Your Follower Privacy Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#follower'])
+            ->withSuccess('Your Follower Privacy Settings Have Been Saved!');
     }
 
     /**
@@ -774,7 +763,8 @@ class UserController extends Controller
         $user->peer_hidden = 0;
         $user->save();
 
-        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#torrent'])->with($this->toastr->success('Your Torrent History Privacy Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#torrent'])
+            ->withSuccess('Your Torrent History Privacy Settings Have Been Saved!');
     }
 
     /**
@@ -809,7 +799,8 @@ class UserController extends Controller
         $notification->show_account_unfollow = ($request->input('show_account_unfollow') && $request->input('show_account_unfollow') == 1 ? 1 : 0);
         $notification->save();
 
-        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#account'])->with($this->toastr->success('Your Account Notification Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#account'])
+            ->withSuccess('Your Account Notification Settings Have Been Saved!');
     }
 
     /**
@@ -843,7 +834,8 @@ class UserController extends Controller
         $notification->show_following_upload = ($request->input('show_following_upload') && $request->input('show_following_upload') == 1 ? 1 : 0);
         $notification->save();
 
-        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#following'])->with($this->toastr->success('Your Followed User Notification Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#following'])
+            ->withSuccess('Your Followed User Notification Settings Have Been Saved!');
     }
 
     /**
@@ -877,7 +869,8 @@ class UserController extends Controller
         $notification->show_bon_gift = ($request->input('show_bon_gift') && $request->input('show_bon_gift') == 1 ? 1 : 0);
         $notification->save();
 
-        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#bon'])->with($this->toastr->success('Your BON Notification Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#bon'])
+            ->withSuccess('Your BON Notification Settings Have Been Saved!');
     }
 
     /**
@@ -912,7 +905,8 @@ class UserController extends Controller
         $notification->show_subscription_topic = ($request->input('show_subscription_topic') && $request->input('show_subscription_topic') == 1 ? 1 : 0);
         $notification->save();
 
-        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#subscription'])->with($this->toastr->success('Your Subscription Notification Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#subscription'])
+            ->withSuccess('Your Subscription Notification Settings Have Been Saved!');
     }
 
     /**
@@ -952,7 +946,8 @@ class UserController extends Controller
         $notification->show_request_unclaim = ($request->input('show_request_unclaim') && $request->input('show_request_unclaim') == 1 ? 1 : 0);
         $notification->save();
 
-        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#request'])->with($this->toastr->success('Your Request Notification Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#request'])
+            ->withSuccess('Your Request Notification Settings Have Been Saved!');
     }
 
     /**
@@ -988,7 +983,8 @@ class UserController extends Controller
         $notification->show_torrent_tip = ($request->input('show_torrent_tip') && $request->input('show_torrent_tip') == 1 ? 1 : 0);
         $notification->save();
 
-        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#torrent'])->with($this->toastr->success('Your Torrent Notification Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#torrent'])
+            ->withSuccess('Your Torrent Notification Settings Have Been Saved!');
     }
 
     /**
@@ -1026,7 +1022,8 @@ class UserController extends Controller
 
         $notification->save();
 
-        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#mention'])->with($this->toastr->success('Your @Mention Notification Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#mention'])
+            ->withSuccess('Your @Mention Notification Settings Have Been Saved!');
     }
 
     /**
@@ -1060,7 +1057,8 @@ class UserController extends Controller
         $notification->show_forum_topic = ($request->input('show_forum_topic') && $request->input('show_forum_topic') == 1 ? 1 : 0);
         $notification->save();
 
-        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#forum'])->with($this->toastr->success('Your Forum Notification Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_notification', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#forum'])
+            ->withSuccess('Your Forum Notification Settings Have Been Saved!');
     }
 
     /**
@@ -1107,7 +1105,8 @@ class UserController extends Controller
         $privacy->show_profile_warning = ($request->input('show_profile_warning') && $request->input('show_profile_warning') == 1 ? 1 : 0);
         $privacy->save();
 
-        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#profile'])->with($this->toastr->success('Your Profile Privacy Settings Have Been Saved!', 'Yay!', ['options']));
+        return redirect()->route('user_privacy', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#profile'])
+            ->withSuccess('Your Profile Privacy Settings Have Been Saved!');
     }
 
     /**
@@ -1129,7 +1128,7 @@ class UserController extends Controller
         \LogActivity::addToLog("Member {$user->username} has changed their account RID.");
 
         return redirect()->route('user_security', ['slug' => $user->slug, 'id' => $user->id, 'hash' => '#rid'])
-            ->with($this->toastr->success('Your RID Was Changed Successfully!', 'Yay!', ['options']));
+            ->withSuccess('Your RID Was Changed Successfully!');
     }
 
     /**
@@ -1205,7 +1204,7 @@ class UserController extends Controller
             if (Hash::check($request->input('password'), $user->password)) {
                 if (Client::where('user_id', '=', $user->id)->get()->count() >= config('other.max_cli')) {
                     return redirect()->route('user_clients', ['username' => $user->username, 'id' => $user->id])
-                        ->with($this->toastr->error('Max Clients Reached!', 'Whoops!', ['options']));
+                        ->withErrors('Max Clients Reached!');
                 }
                 $cli = new Client();
                 $cli->user_id = $user->id;
@@ -1217,14 +1216,14 @@ class UserController extends Controller
                 \LogActivity::addToLog("Member {$user->username} has added a new seedbox to there account.");
 
                 return redirect()->route('user_clients', ['username' => $user->username, 'id' => $user->id])
-                    ->with($this->toastr->success('Client Has Been Added!', 'Yay', ['options']));
+                    ->withSuccess('Client Has Been Added!');
             } else {
                 return redirect()->route('user_clients', ['username' => $user->username, 'id' => $user->id])
-                    ->with($this->toastr->error('Password Invalid!', 'Whoops!', ['options']));
+                    ->withErrors('Password Invalid!');
             }
         } else {
             return redirect()->route('user_clients', ['username' => $user->username, 'id' => $user->id])
-                ->with($this->toastr->error('All required values not received or IP is already registered by a member.', 'Whoops!', ['options']));
+                ->withErrors('All required values not received or IP is already registered by a member.');
         }
     }
 
@@ -1253,10 +1252,10 @@ class UserController extends Controller
             \LogActivity::addToLog("Member {$user->username} has removed a seedbox from there account.");
 
             return redirect()->route('user_clients', ['username' => $user->username, 'id' => $user->id])
-                ->with($this->toastr->success('Client Has Been Removed!', 'Yay!', ['options']));
+                ->withSuccess('Client Has Been Removed!');
         } else {
             return redirect()->route('user_clients', ['username' => $user->username, 'id' => $user->id])
-                ->with($this->toastr->error('Unable to remove this client.', 'Whoops!', ['options']));
+                ->withErrors('Unable to remove this client.');
         }
     }
 
@@ -1316,12 +1315,13 @@ class UserController extends Controller
         \LogActivity::addToLog("Staff Member {$staff->username} has deactivated a warning on {$warning->warneduser->username} account.");
 
         return redirect()->route('warninglog', ['username' => $warning->warneduser->username, 'id' => $warning->warneduser->id])
-            ->with($this->toastr->success('Warning Was Successfully Deactivated', 'Yay!', ['options']));
+            ->withSuccess('Warning Was Successfully Deactivated');
     }
 
     /**
      * Deactivate All Warnings.
      *
+     * @param $username
      * @param $id
      *
      * @return Illuminate\Http\RedirectResponse
@@ -1352,7 +1352,7 @@ class UserController extends Controller
         \LogActivity::addToLog("Staff Member {$staff->username} has deactivated all warnings on {$warning->warneduser->username} account.");
 
         return redirect()->route('warninglog', ['username' => $warning->warneduser->username, 'id' => $warning->warneduser->id])
-            ->with($this->toastr->success('All Warnings Were Successfully Deactivated', 'Yay!', ['options']));
+            ->withSuccess('All Warnings Were Successfully Deactivated');
     }
 
     /**
@@ -1385,12 +1385,13 @@ class UserController extends Controller
         \LogActivity::addToLog("Staff Member {$staff->username} has deleted a warning on {$warning->warneduser->username} account.");
 
         return redirect()->route('warninglog', ['username' => $warning->warneduser->username, 'id' => $warning->warneduser->id])
-            ->with($this->toastr->success('Warning Was Successfully Deleted', 'Yay!', ['options']));
+            ->withSuccess('Warning Was Successfully Deleted');
     }
 
     /**
      * Delete All Warnings.
      *
+     * @param $username
      * @param $id
      *
      * @return Illuminate\Http\RedirectResponse
@@ -1422,7 +1423,7 @@ class UserController extends Controller
         \LogActivity::addToLog("Staff Member {$staff->username} has deleted all warnings on {$warning->warneduser->username} account.");
 
         return redirect()->route('warninglog', ['username' => $warning->warneduser->username, 'id' => $warning->warneduser->id])
-            ->with($this->toastr->success('All Warnings Were Successfully Deleted', 'Yay!', ['options']));
+            ->withSuccess('All Warnings Were Successfully Deleted');
     }
 
     /**
@@ -1444,7 +1445,7 @@ class UserController extends Controller
         \LogActivity::addToLog("Staff Member {$staff->username} has restore a soft deleted warning on {$warning->warneduser->username} account.");
 
         return redirect()->route('warninglog', ['username' => $warning->warneduser->username, 'id' => $warning->warneduser->id])
-            ->with($this->toastr->success('Warning Was Successfully Restored', 'Yay!', ['options']));
+            ->withSuccess('Warning Was Successfully Restored');
     }
 
     /**
@@ -1952,6 +1953,8 @@ class UserController extends Controller
     /**
      * Show User Achievements.
      *
+     * @param $username
+     * @param $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function achievements($username, $id)
@@ -1969,6 +1972,8 @@ class UserController extends Controller
     /**
      * Get A Users Wishlist.
      *
+     * @param $slug
+     * @param $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function wishes($slug, $id)
@@ -1978,7 +1983,7 @@ class UserController extends Controller
         abort_unless((auth()->user()->group->is_modo || auth()->user()->id == $user->id), 403);
 
         $wishes = $user->wishes()->latest()->paginate(25);
-        $personal_freeleech = PersonalFreeleech::where('user_id', '=', $id);
+        $personal_freeleech = PersonalFreeleech::where('user_id', '=', $id)->first();
 
         return view('user.wishlist', [
             'user'               => $user,
@@ -1991,6 +1996,8 @@ class UserController extends Controller
     /**
      * Get A Users Torrent Bookmarks.
      *
+     * @param $slug
+     * @param $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function bookmarks($slug, $id)
@@ -2000,7 +2007,7 @@ class UserController extends Controller
         abort_unless((auth()->user()->group->is_modo || auth()->user()->id == $user->id), 403);
 
         $bookmarks = $user->bookmarks()->latest()->paginate(25);
-        $personal_freeleech = PersonalFreeleech::where('user_id', '=', $id);
+        $personal_freeleech = PersonalFreeleech::where('user_id', '=', $id)->first();
 
         return view('user.bookmarks', [
             'user'               => $user,
@@ -2013,7 +2020,7 @@ class UserController extends Controller
     /**
      * Get A Users Downloads (Fully Downloaded) Table.
      *
-     * @param $username
+     * @param $slug
      * @param $id
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -2084,7 +2091,7 @@ class UserController extends Controller
     /**
      * Get A Users Requested Table.
      *
-     * @param $username
+     * @param $slug
      * @param $id
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -2369,12 +2376,12 @@ class UserController extends Controller
 
         // User's ratio is too low
         if ($user->getRatio() < config('other.ratio')) {
-            return back()->with($this->toastr->error('Your Ratio Is To Low To Download!!!', 'Whoops!', ['options']));
+            return back()->withErrors('Your Ratio Is To Low To Download!');
         }
 
         // User's download rights are revoked
         if ($user->can_download == 0) {
-            return back()->with($this->toastr->error('Your Download Rights Have Been Revoked!!!', 'Whoops!', ['options']));
+            return back()->withErrors('Your Download Rights Have Been Revoked!');
         }
 
         abort_unless(auth()->user()->id == $user->id, 403);
@@ -2401,7 +2408,7 @@ class UserController extends Controller
 
                 // The Torrent File Exist?
                 if (! file_exists(getcwd().'/files/torrents/'.$torrent->file_name)) {
-                    return back()->with($this->toastr->error('Torrent File Not Found! Please Report This Torrent!', 'Error!', ['options']));
+                    return back()->withErrors('Torrent File Not Found! Please Report This Torrent!');
                 } else {
                     // Delete The Last Torrent Tmp File If Exist
                     if (file_exists(getcwd().'/files/tmp/'.$tmpFileName)) {
@@ -2431,7 +2438,19 @@ class UserController extends Controller
         if (file_exists($zip_file)) {
             return response()->download($zip_file)->deleteFileAfterSend(true);
         } else {
-            return back()->with($this->toastr->error('Something Went Wrong!', 'Whoops!', ['options']));
+            return back()->withErrors('Something Went Wrong!');
         }
+    }
+
+    /**
+     * Accept Site Rules.
+     *
+     * @return void
+     */
+    public function acceptRules()
+    {
+        $user = auth()->user();
+        $user->read_rules = 1;
+        $user->save();
     }
 }

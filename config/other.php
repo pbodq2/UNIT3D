@@ -22,7 +22,7 @@ return [
     |
     */
 
-    'codebase' => '"UNIT3D" Nex-Gen Torrent Tracker v1.9.1',
+    'codebase' => '"UNIT3D" Nex-Gen Torrent Tracker v1.9.2',
 
     /*
     |--------------------------------------------------------------------------
@@ -196,4 +196,20 @@ return [
     | False/0 = Disabled
     */
     'application_signups' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Rules Page URL
+    |--------------------------------------------------------------------------
+    | Example: rules.1
+    */
+    'rules_url' => 'https://'.parse_url(env('APP_URL'), PHP_URL_HOST).'/page/rules.1',
+
+    /*
+    |--------------------------------------------------------------------------
+    | FAQ Page URL
+    |--------------------------------------------------------------------------
+    | Example: faq.2
+    */
+    'faq_url' => 'https://'.parse_url(env('APP_URL'), PHP_URL_HOST).'/page/faq.2',
 ];
